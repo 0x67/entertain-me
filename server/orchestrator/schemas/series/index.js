@@ -1,6 +1,8 @@
 const axios = require('axios')
 
-const seriesURL = 'http://localhost:5002/series'
+const seriesURL = process.env.seriesURL || 'http://localhost:5002/series'
+// const seriesURL = 'gateway.docker.internal:5002/series'
+// const seriesURL = '172.18.0.1:5002/series'
 
 const QuerySeries = {
   series: async () => {

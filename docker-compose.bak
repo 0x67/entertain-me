@@ -1,0 +1,18 @@
+version: "3.7"
+
+services:
+  graphql:
+    image: orchestrator
+    ports: 
+      - 4000:4000
+    links:
+      - movies
+      - series
+  movies:
+    image: service-movies
+    ports:
+      - 5001:5001
+  series:
+    image: service-series
+    ports:
+      - 5002:5002

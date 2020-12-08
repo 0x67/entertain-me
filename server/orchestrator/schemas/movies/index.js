@@ -1,6 +1,8 @@
 const axios = require('axios')
 
-const moviesURL = 'http://localhost:5001/movies'
+const moviesURL = process.env.moviesURL || 'http://localhost:5001/movies'
+// const moviesURL = 'gateway.docker.internal:5001/movies'
+// const moviesURL = '172.18.0.1:5001/movies'
 
 const QueryMovie = {
   movies: async () => {

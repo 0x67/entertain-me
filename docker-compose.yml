@@ -1,0 +1,24 @@
+version: "3.7"
+
+services:
+  graphql:
+    image: orchestrator
+    environment:
+      - moviesURL=http://movies-api:5001/movies
+      - seriesURL=http://series-api:5002/series
+    expose: 
+      - "4000"
+    ports: 
+      - "4000:4000"
+  movies-api:
+    image: service-movies
+    expose: 
+      - "5001"
+    ports:
+      - "5001:5001"
+  series-api:
+    image: service-series
+    expose: 
+      - "5002"
+    ports:
+      - "5002:5002"

@@ -1,5 +1,16 @@
 # entertain-me
 
+## Docker Image for Orchestrator and Services
+
+Link to download the images instead of building it yourself will follow. Still getting trouble pushing to Docker repo.
+
+1. In folder `/orchestrator` run `docker build -t orchestrator .` Note the period `.`
+2. In folder `/services/movies` run `docker build -t service-movies .`
+3. In folder `/services/series` run `docker build -t service-series .`
+4. Now in project `root` folder run `docker-compose -f docker-compose.yml up` to start all images in the same network container. To shut down run `docker-compose -f docker-compose.yml down`
+5. Finally, in `/client` folder run `npm start`
+
+
 ## Week-2 Day 4
 
 - Challenge Pagi

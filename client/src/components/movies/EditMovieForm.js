@@ -6,10 +6,9 @@ import { GET_DATA, EDIT_MOVIE } from '../../config/graphql/queries'
 const EditMovieForm = ({data}) => {
   const [isOpen, setIsOpen] = useState(false)
   const [editData, setEditData] = useState({})
-  const [tags, setTags] = useState('')
-  
-  const { refetch } = useQuery(GET_DATA)
+  const [dropdownTags, setDropdownTags] = useState([])
 
+  const { refetch } = useQuery(GET_DATA)
 
   useEffect(() => {
     setEditData({
@@ -19,7 +18,16 @@ const EditMovieForm = ({data}) => {
       popularity: data.popularity,
       tags: data.tags
     })
-    setTags(data.tags.join(','))
+
+    const editTags = data.tags.map((tag, idx) => (
+      {
+        key: idx,
+        text: tag,
+        value: tag
+      }
+    ))
+    
+    setDropdownTags(editTags)
   }, [])
   
   const handleInput = (_, {name, value}) => {
@@ -31,16 +39,28 @@ const EditMovieForm = ({data}) => {
       ...editData,
       [name]: value
     })
+
   }
 
-  const handleTags = (_, {value}) => {
-    setTags(value)
+  const setTags = (_, {value}) => {
     setEditData({
       ...editData,
-      tags: value.split(',')
+      tags: value
     })
-  }
 
+  }
+  
+  const newTag = (_, {value}) => {
+    const newTags = {
+      key: dropdownTags.length + 1,
+      text: value,
+      value: value
+    }
+
+    const newDropdownTags = dropdownTags.concat(newTags)
+    setDropdownTags(newDropdownTags)
+  }
+  
   const submitData = () => {
     updateData({
       variables: {
@@ -67,7 +87,7 @@ const EditMovieForm = ({data}) => {
         <Modal.Content>
             <Form>
               <Form.Field required>
-                <label>Title</label>
+                <label>Title</label>  
                 <Input value={editData.title} type='text' name='title' placeholder='Title' onChange={handleInput} />
                 <small>Movie title.</small>
 
@@ -84,7 +104,7 @@ const EditMovieForm = ({data}) => {
                 <small>Ranging from 1 to 10.</small>
                   
                 <label>Tag</label>
-                <Input onChange={handleTags} value={tags} type='text' name='tags' placeholder='Tags' />
+                <Dropdown defaultValue={data.tags} search selection multiple allowAdditions fluid options={dropdownTags} onChange={setTags} onAddItem={newTag}/>
                 <small>Each tag is separated by comma.</small>
 
               </Form.Field>

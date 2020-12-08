@@ -6,8 +6,8 @@ import { GET_DATA, EDIT_SERIES } from '../../config/graphql/queries'
 const EditSeriesForm = ({data}) => {
   const [isOpen, setIsOpen] = useState(false)
   const [editData, setEditData] = useState({})
-  const [tags, setTags] = useState('')
-  
+  const [dropdownTags, setDropdownTags] = useState([])
+
   const { refetch } = useQuery(GET_DATA)
 
   useEffect(() => {
@@ -18,7 +18,16 @@ const EditSeriesForm = ({data}) => {
       popularity: data.popularity,
       tags: data.tags
     })
-    setTags(data.tags.join(','))
+
+    const editTags = data.tags.map((tag, idx) => (
+      {
+        key: idx,
+        text: tag,
+        value: tag
+      }
+    ))
+    
+    setDropdownTags(editTags)
   }, [])
   
   const handleInput = (_, {name, value}) => {
@@ -32,14 +41,24 @@ const EditSeriesForm = ({data}) => {
     })
   }
 
-  const handleTags = (_, {value}) => {
-    setTags(value)
+  const setTags = (_, {value}) => {
     setEditData({
       ...editData,
-      tags: value.split(',')
+      tags: value
     })
+
   }
 
+  const newTag = (_, {value}) => {
+    const newTags = {
+      key: dropdownTags.length + 1,
+      text: value,
+      value: value
+    }
+
+    const newDropdownTags = dropdownTags.concat(newTags)
+    setDropdownTags(newDropdownTags)
+  }
   const submitData = () => {
     updateData({
       variables: {
@@ -51,6 +70,7 @@ const EditSeriesForm = ({data}) => {
     setIsOpen(false)
   }
 
+  console.log(editData);
   const [updateData] = useMutation(EDIT_SERIES)
   
   return (
@@ -83,7 +103,7 @@ const EditSeriesForm = ({data}) => {
                 <small>Ranging from 1 to 10.</small>
                   
                 <label>Tag</label>
-                <Input onChange={handleTags} value={tags} type='text' name='tags' placeholder='Tags' />
+                <Dropdown defaultValue={data.tags} search selection multiple allowAdditions fluid options={dropdownTags} onChange={setTags} onAddItem={newTag}/>
                 <small>Each tag is separated by comma.</small>
 
               </Form.Field>
