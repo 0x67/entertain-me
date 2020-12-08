@@ -2,8 +2,9 @@ import React from 'react';
 import { Card, Icon, Image, Label, Dropdown } from 'semantic-ui-react';
 import { useMutation, useQuery } from '@apollo/client';
 import EditSeriesForm from './EditSeriesForm'
-import { GET_DATA, DELETE_SERIES } from '../../config/graphql/queries'
 
+import { GET_DATA, DELETE_SERIES, GET_FAVORITES } from '../../config/graphql/queries'
+import client from '../../config/graphql/client'
 
 const CardComponent = ({data}) => {
   const removeTag = (tag) => {
@@ -22,6 +23,19 @@ const CardComponent = ({data}) => {
   const { refetch } = useQuery(GET_DATA)
 
   const [deleteData] = useMutation(DELETE_SERIES)
+
+  const addToFavorite = (data) => {
+    const { favorites: cacheFavorites } = client.readQuery({
+      query: GET_FAVORITES
+    })
+    
+    client.writeQuery({
+      query: GET_FAVORITES,
+      data: {
+        favorites: [...cacheFavorites, data]
+      }
+    })
+  }
 
   return (
     <Card centered>
@@ -50,7 +64,7 @@ const CardComponent = ({data}) => {
           >
             <Dropdown.Menu>
               <Dropdown.Header icon='settings' content='Options'/>
-              <Dropdown.Item icon='star' text='Mark as Favorites'/>
+              <Dropdown.Item icon='star' text='Mark as Favorites' onClick={() => addToFavorite(data)}/>
               <EditSeriesForm data={data}/>
               <Dropdown.Item icon='trash' text='Delete' onClick={() => deleteItem()}/>
             </Dropdown.Menu>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card } from 'semantic-ui-react';
+import { Card, Message } from 'semantic-ui-react';
 
 import client from '../config/graphql/client'
 import { GET_FAVORITES } from '../config/graphql/queries'
@@ -19,6 +19,21 @@ const Favorite = () => {
     console.log(favorites);
   }, [])
 
+  if(favorites.length === 0) {
+    return (
+      <>
+      <div style={{
+      }} className="ui container">
+        <Navbar/>
+
+        <Message
+          header='Uh oh!'
+          content='You currently have no favorited movies/series. You can add them from Homepage, then you can comeback here to view them.'
+        />
+      </div>
+    </>
+    )
+  }
   return (
     <>
       <div style={{
