@@ -2,7 +2,7 @@
 
 ## Docker Image for Orchestrator and Services
 
-Link to download the images instead of building it yourself will follow. Still getting trouble pushing to Docker repo.
+Download images from [Docker Hub](https://hub.docker.com/r/0x67/entertain-me-server). Or manually build the images.
 
 1. In folder `/orchestrator` run `docker build -t orchestrator .` Note the period `.`
 2. In folder `/services/movies` run `docker build -t service-movies .`
