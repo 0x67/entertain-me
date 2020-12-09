@@ -12,10 +12,12 @@ const resolvers = {
     addMovie: MutationMovie.addMovie,
     updateMovie: MutationMovie.updateMovie,
     deleteMovie: MutationMovie.deleteMovie,
+    deleteMovieTag: MutationMovie.deleteTags,
     
     addSeries: MutationSeries.addSeries,
     updateSeries: MutationSeries.updateSeries,
-    deleteSeries: MutationSeries.deleteSeries
+    deleteSeries: MutationSeries.deleteSeries,
+    deleteSeriesTag: MutationSeries.deleteTags
   }
 }
 

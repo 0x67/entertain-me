@@ -2,8 +2,8 @@ const { MongoClient } = require('mongodb')
 
 // Comment conditionally to connect to mongodb
 
-// const url = 'mongodb://localhost:27017' // when running directly on windows/linux/mac
-const url = 'mongodb://host.docker.internal:27017' // when running inside docker container
+const url = 'mongodb://localhost:27017' // when running directly on windows/linux/mac
+// const url = 'mongodb://host.docker.internal:27017' // when running inside docker container
 
 const dbName = 'EntertainMe'
 

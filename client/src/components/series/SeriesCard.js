@@ -3,12 +3,18 @@ import { Card, Icon, Image, Label, Dropdown } from 'semantic-ui-react';
 import { useMutation, useQuery } from '@apollo/client';
 import EditSeriesForm from './EditSeriesForm'
 
-import { GET_DATA, DELETE_SERIES, GET_FAVORITES } from '../../config/graphql/queries'
+import { GET_DATA, DELETE_SERIES, GET_FAVORITES, DELETE_SERIES_TAG } from '../../config/graphql/queries'
 import client from '../../config/graphql/client'
 
 const CardComponent = ({data}) => {
-  const removeTag = (tag) => {
-    console.log(`tag ${tag} removed from movie with ID ${data._id}` );
+  const removeTag = (tags) => {
+    deleteTag({
+      variables: {
+        id: data._id,
+        data: {tags}
+      }
+    })
+    refetch()
   }
 
   const deleteItem = () => {
@@ -23,6 +29,7 @@ const CardComponent = ({data}) => {
   const { refetch } = useQuery(GET_DATA)
 
   const [deleteData] = useMutation(DELETE_SERIES)
+  const [deleteTag] = useMutation(DELETE_SERIES_TAG)
 
   const addToFavorite = (data) => {
     const { favorites: cacheFavorites } = client.readQuery({

@@ -24,6 +24,10 @@ class MovieModel {
   static deleteMovie(id) {
     return movie.deleteOne({_id: ObjectID(id)})
   }
+
+  static removeTags(id, tag) {
+    return movie.findOneAndUpdate({_id: ObjectID(id)}, {$pull: { tags: { $in: [tag] } } }, {returnOriginal: false})
+  }
 }
 
 

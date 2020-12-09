@@ -42,17 +42,24 @@ const typeDefs = gql`
     tags: [String!]
   }
 
+  input dataTag {
+    tags: String!
+  }
+
   type Mutation {
     addMovie(
       data: dataMovie
     ):Movies
     updateMovie(_id:ID, data: dataMovie):Movies
     deleteMovie(_id:ID):Movies
+    deleteMovieTag(_id:ID, data: dataTag):Movies
+
     addSeries(
       data: dataSeries
     ):Series
     updateSeries(_id:ID, data: dataSeries):Series
     deleteSeries(_id:ID):Series
+    deleteSeriesTag(_id:ID, data: dataTag):Series
   }
 `;
 

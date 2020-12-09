@@ -63,6 +63,20 @@ class SeriesController {
       res.status(500).json(err)
     }
   }
+
+  static async deleteTags(req, res) {
+    try {
+      const { id } = req.params
+
+      const { tags } = req.body
+
+      const { value } = await Model.removeTags(id, tags)
+
+      res.status(201).json(value)
+    } catch (err) {
+      res.status(500).json(err)
+    }
+  }
 }
 
 module.exports =  SeriesController

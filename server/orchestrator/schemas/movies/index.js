@@ -1,8 +1,6 @@
 const axios = require('axios')
 
 const moviesURL = process.env.moviesURL || 'http://localhost:5001/movies'
-// const moviesURL = 'gateway.docker.internal:5001/movies'
-// const moviesURL = '172.18.0.1:5001/movies'
 
 const QueryMovie = {
   movies: async () => {
@@ -53,7 +51,7 @@ const MutationMovie = {
 
   updateMovie: async(_, args) => {
     try {
-      const { title, overview, poster_path, tags} = args.data
+      const { title, overview, poster_path, tags } = args.data
       const { _id } = args
       let popularity = parseFloat(args.data.popularity)
 
@@ -79,10 +77,26 @@ const MutationMovie = {
     try {
       const { _id } = args
 
-      console.log( _id);
       const { data } = await axios({
         method: 'DELETE',
         url: `${moviesURL}/${_id}`,
+      })
+
+      return data
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
+  deleteTags: async(_, args) => {
+    try {
+      const { _id } = args
+      const { tags } = args.data
+
+      const { data } = await axios({
+        method: 'PATCH',
+        url: `${moviesURL}/${_id}`,
+        data: {tags}
       })
 
       return data

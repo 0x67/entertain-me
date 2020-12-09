@@ -15,8 +15,6 @@ const Favorite = () => {
     })
 
     setFavorites(cacheFavorites)
-
-    console.log(favorites);
   }, [])
 
   if(favorites.length === 0) {

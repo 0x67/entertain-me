@@ -22,6 +22,10 @@ class SeriesModel {
   static deleteSeries(id) {
     return series.deleteOne({_id: ObjectID(id)})
   }
+
+  static removeTags(id, tag) {
+    return series.findOneAndUpdate({_id: ObjectID(id)}, {$pull: { tags: { $in: [tag] } } }, {returnOriginal: false})
+  }
 }
 
 

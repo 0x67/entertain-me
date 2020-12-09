@@ -3,12 +3,18 @@ import { Card, Icon, Image, Label, Dropdown } from 'semantic-ui-react';
 import { useMutation, useQuery } from '@apollo/client';
 import EditMovieForm from './EditMovieForm'
 
-import { GET_DATA, DELETE_MOVIES, GET_FAVORITES } from '../../config/graphql/queries'
+import { GET_DATA, DELETE_MOVIES, GET_FAVORITES, DELETE_MOVIE_TAG } from '../../config/graphql/queries'
 import client from '../../config/graphql/client'
 
 const CardComponent = ({data}) => {
-  const removeTag = (tag) => {
-    console.log(`tag ${tag} removed from movie with ID ${data._id}` );
+  const removeTag = (tags) => {
+    deleteTag({
+      variables: {
+        id: data._id,
+        data: {tags}
+      }
+    })
+    refetch()
   }
 
   const deleteItem = () => {
@@ -23,6 +29,7 @@ const CardComponent = ({data}) => {
   const { refetch } = useQuery(GET_DATA)
 
   const [deleteData] = useMutation(DELETE_MOVIES)
+  const [deleteTag] = useMutation(DELETE_MOVIE_TAG)
 
   const addToFavorite = (data) => {
     const { favorites: cacheFavorites } = client.readQuery({
@@ -36,6 +43,7 @@ const CardComponent = ({data}) => {
       }
     })
   }
+  
   return (
     <Card centered>
       <Image src={data.poster_path} size="medium" wrapped ui={false} />
@@ -63,6 +71,7 @@ const CardComponent = ({data}) => {
           >
             <Dropdown.Menu>
               <Dropdown.Header icon='settings' content='Options'/>
+              {/* {checkFavorite()} */}
               <Dropdown.Item icon='star' text='Mark as Favorites' onClick={() => addToFavorite(data)}/>
               <EditMovieForm data={data}/>
               <Dropdown.Item icon='trash' text='Delete' onClick={() => deleteItem()}/>

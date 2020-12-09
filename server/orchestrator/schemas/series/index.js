@@ -1,8 +1,6 @@
 const axios = require('axios')
 
 const seriesURL = process.env.seriesURL || 'http://localhost:5002/series'
-// const seriesURL = 'gateway.docker.internal:5002/series'
-// const seriesURL = '172.18.0.1:5002/series'
 
 const QuerySeries = {
   series: async () => {
@@ -82,6 +80,23 @@ const MutationSeries = {
       const { data } = await axios({
         method: 'DELETE',
         url: `${seriesURL}/${_id}`,
+      })
+
+      return data
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
+  deleteTags: async(_, args) => {
+    try {
+      const { _id } = args
+      const { tags } = args.data
+
+      const { data } = await axios({
+        method: 'PATCH',
+        url: `${seriesURL}/${_id}`,
+        data: {tags}
       })
 
       return data

@@ -64,3 +64,19 @@ export const GET_FAVORITES = gql `
     }
   }
 `
+
+export const DELETE_SERIES_TAG = gql `
+  mutation deleteTag($id: ID, $data: dataTag) {
+    deleteSeriesTag(_id: $id, data: $data) {
+      _id
+    }
+  }
+`
+
+export const DELETE_MOVIE_TAG = gql `
+  mutation deleteTag($id: ID, $data: dataTag) {
+    deleteMovieTag(_id: $id, data: $data) {
+      _id
+    }
+  }
+`

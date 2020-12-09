@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
-import { Modal, Button, Dropdown, Form, Input, Icon } from 'semantic-ui-react'
+import { Modal, Button, Dropdown, Form, Input, Icon, Message } from 'semantic-ui-react'
 import { gql, useMutation, useQuery } from '@apollo/client';
+import { Formik } from 'formik'
+import * as yup from 'yup'
+import * as isEmpty from 'lodash.isempty'
 
 const AddForm = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -44,7 +47,6 @@ const AddForm = () => {
       ...newData,
       tags: value
     })
-
   }
 
   const newTag = (_, {value}) => {
@@ -56,17 +58,6 @@ const AddForm = () => {
 
     const newDropdownTags = dropdownTags.concat(newTags)
     setDropdownTags(newDropdownTags)
-  }
-
-  const handleInput = (_, {name, value}) => {
-    if(name === 'popularity') {
-      value = Number(value)
-    }
-
-    setData({
-      ...newData,
-      [name]: value
-    })
   }
 
   const clearForm = () => {
@@ -99,28 +90,6 @@ const AddForm = () => {
   const [addMovie] = useMutation(NEW_MOVIE)
   const [addSeries] = useMutation(NEW_SERIES)
 
-  const submitData = () => {
-    console.log(type);
-    console.log(newData);
-
-    if(type === 'Movies') {
-      addMovie({
-        variables: {
-          data: newData
-        }
-      })
-      refetch()
-    } else if (type === 'Series') {
-      addSeries({
-        variables: {
-          data: newData
-        }
-      })
-      refetch()
-    }
-    setIsOpen(false)
-  }
-
   const GET_DATA = gql `
     query allData {
       movies {
@@ -146,31 +115,128 @@ const AddForm = () => {
   return (
     <>
     <Button icon='plus' onClick={() => setIsOpen(true)}/>
+    
+    <Formik
+      initialValues={{
+        title: '',
+        overview: '',
+        poster_path: '',
+        popularity: '',
+      }}
+      validationSchema={yup.object().shape({
+        title: yup
+          .string()
+          .required('Title cannot be empty.'),
+        overview: yup
+          .string()
+          .required('Overview cannot be empty.'),
+        poster_path: yup
+          .string()
+          .required('Image link cannot be empty.'),
+        popularity: yup
+          .number()
+          .min(0, 'Popularity cannot lower than 0.')
+          .max(10, 'Popularity cannot exceed 10.')
+          .required('Popularity cannot be empty.'),
+      })}
 
-    <Modal
+      onSubmit={(values, actions) => {
+        const submitData = {
+          title: values.title,
+          overview: values.overview,
+          poster_path: values.poster_path,
+          popularity: values.popularity,
+          tags: newData.tags
+        }
+    
+        console.log(type);
+        console.log(submitData);
+        if(type === 'Movies') {
+          addMovie({
+            variables: {
+              data: submitData
+            }
+          })
+          refetch()
+        } else if (type === 'Series') {
+          addSeries({
+            variables: {
+              data: submitData
+            }
+          })
+          refetch()
+        }
+        
+        setTimeout(() => {
+          setIsOpen(false)
+        }, 1000)
+      }}
+
+      render={({
+        values,
+        errors,
+        handleChange,
+        handleSubmit,
+        isSubmitting,
+        dirty,
+        setFieldValue
+      }) => (
+        <Modal
         size='tiny'
         open={isOpen}
         onClose={() => setIsOpen(false)}
         onOpen={() => setIsOpen(true)}
-      >
+        >
         <Modal.Header>Add New Movie/Series to your Collection</Modal.Header>
-        <Modal.Content>
+        <Modal.Content scrolling>
+          {errors.title && <Message error content={errors.title}/>}
+          {errors.overview && <Message error content={errors.overview}/>}
+          {errors.poster_path && <Message error content={errors.poster_path}/>}
+          {errors.popularity && <Message error content={errors.popularity}/>}
+          {console.log(errors)}
           <Form>
             <Form.Field required>
               <label>Title</label>
-              <Input value={newData.title} type='text' name='title' placeholder='Title' onChange={handleInput} />
+              <Input 
+                value={values.title} 
+                type='text' 
+                name='title' 
+                placeholder='Title' 
+                onChange={handleChange} 
+                error={errors.title !== undefined}
+              />
               <small>Movie title.</small>
 
               <label>Overview</label>
-              <Input value={newData.overview} type='text' name='overview' placeholder='Overview' onChange={handleInput} fluid/>
+              <Input 
+                value={values.overview} 
+                type='text' 
+                name='overview' 
+                placeholder='Overview' 
+                onChange={handleChange} 
+                error={errors.overview !== undefined}
+              />
               <small>Your review.</small>
 
               <label>Image</label>
-              <Input value={newData.poster_path} type='url' name='poster_path' placeholder='Image Link' onChange={handleInput} />
+              <Input 
+                value={values.poster_path} 
+                type='url' 
+                name='poster_path' 
+                placeholder='Image Link' 
+                onChange={handleChange} 
+                error={errors.poster_path !== undefined}/>
               <small>Link to an image.</small>
 
               <label>Rating</label>
-              <Input value={newData.popularity} type='number' name='popularity' placeholder='Rating' onChange={handleInput} />
+              <Input 
+                value={values.popularity} 
+                type='number' 
+                name='popularity' 
+                placeholder='Rating' 
+                onChange={handleChange} 
+                error={errors.popularity !== undefined}
+              />
               <small>Ranging from 1 to 10.</small>
 
               <label>Type</label>
@@ -189,12 +255,19 @@ const AddForm = () => {
             <Icon name='cancel' />
             Cancel
           </Button>
-          <Button positive onClick={() => submitData()}>
+
+          <Button 
+          positive 
+          onClick={handleSubmit}
+          loading={isSubmitting}
+          disabled={isSubmitting || !isEmpty(errors) || isEmpty(newData.tags) || !type || !dirty}>
             <Icon name='save' />
             Save
           </Button>
         </Modal.Actions>
       </Modal>
+      )}
+    />
     </>
   )
 }

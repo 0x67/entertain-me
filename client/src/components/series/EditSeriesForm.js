@@ -70,7 +70,6 @@ const EditSeriesForm = ({data}) => {
     setIsOpen(false)
   }
 
-  console.log(editData);
   const [updateData] = useMutation(EDIT_SERIES)
   
   return (
